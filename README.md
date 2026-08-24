@@ -37,6 +37,10 @@ Then open all four in tabs and try the full flow:
 
 Each app also has small "Other GEYM apps" links in its footer/profile so you can jump between them.
 
+## Deploy for mobile access
+
+The frontends cannot use `localhost:4000` on a phone because that address points to the phone itself. Deploy `shared-backend` as its own Vercel project, then set `VITE_API_URL` in each frontend's Vercel project to the backend URL plus `/api`, for example `https://geym-api.example.com/api`. Redeploy the frontends after saving the variable. The `.env.example` files show the local development value.
+
 ## Seed Firestore catalog
 
 The catalog seed contains products in all seven categories. After authenticating with the Firebase project and allowing writes to the `categories` and `products` collections, run:

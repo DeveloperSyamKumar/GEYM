@@ -134,5 +134,9 @@ app.get('/api/stats', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => log(`GEYM shared backend running on http://localhost:${PORT}`));
+export default app;
+
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => log(`GEYM shared backend running on http://localhost:${PORT}`));
+}

@@ -1,6 +1,8 @@
 // Every app in this suite points at the same shared backend, which is
 // what keeps them interlinked. Override with an env var in production.
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const configuredUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
+const localDevelopment = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const BASE_URL = configuredUrl || (localDevelopment ? 'http://localhost:4000/api' : '/api');
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
