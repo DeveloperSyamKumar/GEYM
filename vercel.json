@@ -1,0 +1,6 @@
+{
+  "installCommand": "npm --prefix customer-app install",
+  "buildCommand": "npm --prefix customer-app run build",
+  "outputDirectory": "customer-app/dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
