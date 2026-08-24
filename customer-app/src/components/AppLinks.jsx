@@ -1,10 +1,10 @@
 // Cross-app navigation — these four apps share one backend and are meant
 // to be run side by side during dev (see root README for ports).
 const APPS = [
-  { label: 'Customer App', url: import.meta.env.VITE_CUSTOMER_APP_URL || 'http://localhost:5173' },
-  { label: 'Shop Partner', url: import.meta.env.VITE_SHOP_APP_URL || 'http://localhost:5174' },
-  { label: 'Delivery Partner', url: import.meta.env.VITE_DELIVERY_APP_URL || 'http://localhost:5175' },
-  { label: 'Admin Panel', url: import.meta.env.VITE_ADMIN_APP_URL || 'http://localhost:5176' },
+  { label: 'Customer App', url: import.meta.env.VITE_CUSTOMER_APP_URL || (import.meta.env.DEV ? 'http://localhost:5173' : '/') },
+  { label: 'Shop Partner', url: import.meta.env.VITE_SHOP_APP_URL || (import.meta.env.DEV ? 'http://localhost:5174' : '/shop/') },
+  { label: 'Delivery Partner', url: import.meta.env.VITE_DELIVERY_APP_URL || (import.meta.env.DEV ? 'http://localhost:5175' : '/delivery/') },
+  { label: 'Admin Panel', url: import.meta.env.VITE_ADMIN_APP_URL || (import.meta.env.DEV ? 'http://localhost:5176' : '/admin/') },
 ];
 
 export default function AppLinks({ current }) {

@@ -6,6 +6,7 @@ import {
 } from './data/seed.js';
 
 const app = express();
+app.disable('x-powered-by');
 app.use(cors());
 app.use(express.json());
 
@@ -55,7 +56,7 @@ app.get('/api/orders', (req, res) => {
   if (shopId) list = list.filter((o) => o.shopId === shopId);
   if (deliveryPartnerId) list = list.filter((o) => o.deliveryPartnerId === deliveryPartnerId);
   if (status) list = list.filter((o) => o.status === status);
-  res.json(list.sort((a, b) => new Date(b.placedAt) - new Date(a.placedAt)));
+  res.json(list.toSorted((a, b) => new Date(b.placedAt) - new Date(a.placedAt)));
 });
 
 app.get('/api/orders/:id', (req, res) => {

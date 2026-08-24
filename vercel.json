@@ -1,6 +1,15 @@
 {
-  "installCommand": "npm --prefix customer-app install",
-  "buildCommand": "npm --prefix customer-app run build",
-  "outputDirectory": "customer-app/dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.js" },
+    { "source": "/shop/assets/(.*)", "destination": "/shop/assets/$1" },
+    { "source": "/shop/(.*)", "destination": "/shop/index.html" },
+    { "source": "/delivery/assets/(.*)", "destination": "/delivery/assets/$1" },
+    { "source": "/delivery/(.*)", "destination": "/delivery/index.html" },
+    { "source": "/admin/assets/(.*)", "destination": "/admin/assets/$1" },
+    { "source": "/admin/(.*)", "destination": "/admin/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
