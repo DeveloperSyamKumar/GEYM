@@ -37,6 +37,17 @@ Then open all four in tabs and try the full flow:
 
 Each app also has small "Other GEYM apps" links in its footer/profile so you can jump between them.
 
+## Seed Firestore catalog
+
+The catalog seed contains products in all seven categories. After authenticating with the Firebase project and allowing writes to the `categories` and `products` collections, run:
+
+```bash
+cd shop-app
+npm run seed:firestore
+```
+
+The command writes deterministic document IDs, so it can be run again safely without creating duplicates.
+
 ## Why this architecture
 - **One shared backend, four frontends** mirrors how this would actually be built in production: separate deployable apps for separate audiences (customers, shop owners, riders, internal admins), all backed by one API and one database.
 - Data lives **in memory** in `shared-backend/server.js` for this starter — restarting the backend clears orders. Swap in Postgres/Mongo + an ORM (Prisma is a good fit) when you're ready; the route shapes won't need to change.

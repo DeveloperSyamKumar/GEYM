@@ -36,6 +36,18 @@ app.get('/api/shops', (req, res) => res.json(shops));
 app.get('/api/delivery-partners', (req, res) => res.json(deliveryPartners));
 app.get('/api/status-flow', (req, res) => res.json({ flow: STATUS_FLOW, labels: STATUS_LABELS }));
 
+app.get('/api/customers', (req, res) => {
+  const customerMap = new Map();
+  for (const order of orders) {
+    const existing = customerMap.get(order.phone) || {
+      id: `customer-${order.phone}`, name: order.customerName, phone: order.phone, orders: 0,
+    };
+    existing.orders += 1;
+    customerMap.set(order.phone, existing);
+  }
+  res.json([...customerMap.values()]);
+});
+
 // ---------- Orders (shared across all 4 apps) ----------
 app.get('/api/orders', (req, res) => {
   const { shopId, deliveryPartnerId, status } = req.query;
@@ -54,15 +66,25 @@ app.get('/api/orders/:id', (req, res) => {
 
 app.post('/api/orders', (req, res) => {
   const { items, customerName, phone, address, paymentMethod } = req.body;
-  if (!items || !items.length) return res.status(400).json({ error: 'Order must include items' });
+  if (!Array.isArray(items) || !items.length) return res.status(400).json({ error: 'Order must include items' });
 
-  const itemTotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const orderItems = items.map((item) => {
+    const product = products.find((candidate) => candidate.id === item.productId);
+    const qty = Number(item.qty);
+    if (!product || !Number.isInteger(qty) || qty < 1 || qty > 99) return null;
+    return { productId: product.id, name: product.name, price: product.price, qty };
+  });
+  if (orderItems.some((item) => !item)) {
+    return res.status(400).json({ error: 'Order contains an invalid product or quantity' });
+  }
+
+  const itemTotal = orderItems.reduce((sum, item) => sum + item.price * item.qty, 0);
   const deliveryFee = 40;
   const packagingFee = 20;
 
   const order = {
-    id: `GEYM${Math.floor(10000 + Math.random() * 89999)}`,
-    items, itemTotal, deliveryFee, packagingFee,
+    id: `GEYM${nanoid(8).toUpperCase()}`,
+    items: orderItems, itemTotal, deliveryFee, packagingFee,
     total: itemTotal + deliveryFee + packagingFee,
     customerName: customerName || 'Rohit Sharma',
     phone: phone || '+91 98765 43210',
@@ -84,6 +106,10 @@ app.patch('/api/orders/:id/status', (req, res) => {
   if (!order) return res.status(404).json({ error: 'Order not found' });
   const { status } = req.body;
   if (!STATUS_FLOW.includes(status)) return res.status(400).json({ error: 'Invalid status' });
+  const currentIndex = STATUS_FLOW.indexOf(order.status);
+  if (STATUS_FLOW.indexOf(status) !== currentIndex + 1) {
+    return res.status(409).json({ error: `Order can only move from ${order.status} to the next status` });
+  }
 
   order.status = status;
   order.statusHistory.push({ status, at: new Date().toISOString() });

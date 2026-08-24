@@ -7,12 +7,19 @@ import CategoryIcon from '../components/CategoryIcon.jsx';
 export default function Home() {
   const [categories, setCategories] = useState([]);
   const [shops, setShops] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     api.get('/categories').then(setCategories).catch(console.error);
     api.get('/shops').then(setShops).catch(console.error);
+    api.get('/products').then(setProducts).catch(console.error);
   }, []);
+
+  const matches = search.trim()
+    ? products.filter((product) => `${product.name} ${product.brand}`.toLowerCase().includes(search.toLowerCase())).slice(0, 5)
+    : [];
 
   return (
     <div className="pb-4">
@@ -28,10 +35,26 @@ export default function Home() {
         <div className="flex items-center gap-2 bg-gray-100 rounded-xl px-4 py-3">
           <Search size={18} className="text-gray-400" />
           <input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
             placeholder="Search electrical, mechanical materials"
             className="bg-transparent outline-none text-sm flex-1"
           />
         </div>
+        {matches.length > 0 && (
+          <div className="bg-white border border-gray-200 rounded-xl mt-2 overflow-hidden">
+            {matches.map((product) => (
+              <button
+                type="button"
+                key={product.id}
+                onClick={() => navigate(`/product/${product.id}`)}
+                className="w-full text-left px-3 py-2 border-b last:border-b-0 border-gray-100 text-sm"
+              >
+                {product.name}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="px-4 mt-4">
@@ -67,7 +90,6 @@ export default function Home() {
 
       <div className="px-4 mt-6 flex items-center justify-between">
         <h2 className="font-bold">Top Stores Near You</h2>
-        <span className="text-gray-500 text-sm">View all</span>
       </div>
       <div className="px-4 mt-3 space-y-2">
         {shops.map((s) => (

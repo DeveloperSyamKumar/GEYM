@@ -1,16 +1,19 @@
+import { useEffect, useState } from 'react';
+import { api } from '../api/client.js';
+
 export default function Customers() {
-  // Static placeholder — wire up a real /api/customers endpoint on the
-  // shared backend once you have customer accounts/auth in place.
-  const customers = [
-    { id: 'c1', name: 'Rohit Sharma', phone: '+91 98765 43210', orders: 4 },
-    { id: 'c2', name: 'Vikas Yadav', phone: '+91 91234 56780', orders: 2 },
-    { id: 'c3', name: 'Ankit Singh', phone: '+91 90000 11122', orders: 7 },
-  ];
+  const [customers, setCustomers] = useState([]);
+
+  useEffect(() => {
+    api.get('/customers').then(setCustomers).catch(console.error);
+  }, []);
 
   return (
     <div className="p-6">
       <h1 className="text-xl font-bold mb-4">Customers</h1>
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      {customers.length === 0 ? (
+        <p className="text-sm text-gray-500">No customers yet.</p>
+      ) : <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-left text-gray-500">
             <tr>
@@ -29,7 +32,7 @@ export default function Customers() {
             ))}
           </tbody>
         </table>
-      </div>
+      </div>}
     </div>
   );
 }

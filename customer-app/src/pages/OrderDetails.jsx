@@ -7,10 +7,27 @@ import StatusBadge from '../components/StatusBadge.jsx';
 export default function OrderDetails() {
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     api.get(`/orders/${orderId}`).then(setOrder).catch(console.error);
   }, [orderId]);
+
+  const copyOrderId = async () => {
+    await navigator.clipboard.writeText(order.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  const downloadInvoice = () => {
+    const invoice = [`GEYM invoice`, `Order: ${order.id}`, `Date: ${new Date(order.placedAt).toLocaleString()}`, '', ...order.items.map((item) => `${item.name} x ${item.qty}: INR ${(item.price * item.qty).toFixed(2)}`), '', `Total: INR ${order.total.toFixed(2)}`].join('\n');
+    const url = URL.createObjectURL(new Blob([invoice], { type: 'text/plain' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${order.id}-invoice.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   if (!order) return <div className="p-4 text-gray-500">Loading…</div>;
 
@@ -24,7 +41,7 @@ export default function OrderDetails() {
             <p className="text-xs text-gray-500">Order ID</p>
             <p className="font-semibold text-sm">#{order.id}</p>
           </div>
-          <button className="text-navy text-xs">Copy</button>
+          <button type="button" onClick={copyOrderId} className="text-navy text-xs">{copied ? 'Copied' : 'Copy'}</button>
         </div>
         <p className="text-sm text-gray-600 mt-2">
           Order Date: {new Date(order.placedAt).toLocaleString()}
@@ -62,7 +79,7 @@ export default function OrderDetails() {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 max-w-md mx-auto">
-        <button className="w-full border border-navy text-navy rounded-xl py-3 font-semibold text-sm">
+        <button type="button" onClick={downloadInvoice} className="w-full border border-navy text-navy rounded-xl py-3 font-semibold text-sm">
           Download Invoice
         </button>
       </div>
