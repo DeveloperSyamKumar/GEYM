@@ -52,6 +52,8 @@ npm run seed:firestore
 
 The command writes deterministic document IDs, so it can be run again safely without creating duplicates.
 
+Copy `shop-app/.env.example` to `shop-app/.env`, fill in the Firebase values from the Firebase Console, and keep the `.env` file out of Git. Add the `VITE_FIREBASE_*` values to Vercel environment variables for the shop app. If the Firebase API key was ever used as a server credential, rotate it in Google Cloud Console and restrict it to the project's web domains.
+
 ## Why this architecture
 - **One shared backend, four frontends** mirrors how this would actually be built in production: separate deployable apps for separate audiences (customers, shop owners, riders, internal admins), all backed by one API and one database.
 - Data lives **in memory** in `shared-backend/server.js` for this starter — restarting the backend clears orders. Swap in Postgres/Mongo + an ORM (Prisma is a good fit) when you're ready; the route shapes won't need to change.

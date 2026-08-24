@@ -2,14 +2,15 @@ import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAFWZ2NBNonDeRaBjVIXnEtc8noyO43UgU',
-  authDomain: 'geym-c9179.firebaseapp.com',
-  projectId: 'geym-c9179',
-  storageBucket: 'geym-c9179.firebasestorage.app',
-  messagingSenderId: '641834253283',
-  appId: '1:641834253283:web:ec2112ba4c16cc9a347ed6',
-  measurementId: 'G-ZSGNXKPK10',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-export const firebaseApp = initializeApp(firebaseConfig);
-export const analytics = getAnalytics(firebaseApp);
+const hasFirebaseConfig = Object.values(firebaseConfig).every(Boolean);
+export const firebaseApp = hasFirebaseConfig ? initializeApp(firebaseConfig) : null;
+export const analytics = firebaseApp ? getAnalytics(firebaseApp) : null;

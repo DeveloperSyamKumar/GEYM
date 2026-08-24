@@ -2,13 +2,18 @@ import { initializeApp } from 'firebase/app';
 import { doc, getFirestore, writeBatch } from 'firebase/firestore';
 import { categories, products } from '../../shared-backend/data/seed.js';
 
+const required = (name) => {
+  if (!process.env[name]) throw new Error(`Missing environment variable: ${name}`);
+  return process.env[name];
+};
+
 const firebaseConfig = {
-  apiKey: 'AIzaSyAFWZ2NBNonDeRaBjVIXnEtc8noyO43UgU',
-  authDomain: 'geym-c9179.firebaseapp.com',
-  projectId: 'geym-c9179',
-  storageBucket: 'geym-c9179.firebasestorage.app',
-  messagingSenderId: '641834253283',
-  appId: '1:641834253283:web:ec2112ba4c16cc9a347ed6',
+  apiKey: required('FIREBASE_API_KEY'),
+  authDomain: required('FIREBASE_AUTH_DOMAIN'),
+  projectId: required('FIREBASE_PROJECT_ID'),
+  storageBucket: required('FIREBASE_STORAGE_BUCKET'),
+  messagingSenderId: required('FIREBASE_MESSAGING_SENDER_ID'),
+  appId: required('FIREBASE_APP_ID'),
 };
 
 const db = getFirestore(initializeApp(firebaseConfig));
